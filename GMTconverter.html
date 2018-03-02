@@ -1,5 +1,7 @@
-<html>
+<!DOCTYPE html>
+<html lang="en">
 <head>
+<meta charset="utf-8"/>
 <title>GMT Converter</title>
 <style>
 table { border: none; border-collapse: collapse; }
@@ -10,20 +12,28 @@ tr:nth-child(even) {background-color: #f2f2f2}
 <script>
 <!--
 
+// grab current timestamp
 var today = new Date();
-var hours = today.getUTCHours();
 
+// get UTC hour
+var hours = today.getUTCHours();
+// modifiy style sheet to highlight correct hour row
 var sheet = document.createElement('style');
 sheet.innerHTML = ".hour"+("0"+hours).slice(-2)+" { background-color: yellow;}";
 document.head.appendChild(sheet);
 
-
+// get UTC minutes
 var minutes = today.getUTCMinutes();
-minutes = minutes - (minutes % 5);
+var minutesmod5 = minutes - (minutes % 5);
+// modify style sheet to highlight correct 1/12th (5 minutes) hour row.
 var sheet2 = document.createElement('style');
-sheet2.innerHTML = ".minutes"+("0"+hours).slice(-2)+("0"+minutes).slice(-2)+" { background-color: yellow;}";
+sheet2.innerHTML = ".minutes"+("0"+hours).slice(-2)+("0"+minutesmod5).slice(-2)+" { background-color: yellow;}";
 document.head.appendChild(sheet2);
 
+// get UTC seconds
+var seconds = today.getUTCSeconds();
+
+// build text time stamp
 var dateString =
   today.getUTCFullYear() +"/"+
   ("0" + (today.getUTCMonth()+1)).slice(-2) +"/"+
@@ -32,24 +42,54 @@ var dateString =
   ("0" + today.getUTCMinutes()).slice(-2) + ":" +
   ("0" + today.getUTCSeconds()).slice(-2);
   
+var localString =
+  (today.getTimezoneOffset()/60) +" "+
+  today.getFullYear() +"/"+
+  ("0" + (today.getMonth()+1)).slice(-2) +"/"+
+  ("0" + today.getDate()).slice(-2) + " " +
+  ("0" + today.getHours()).slice(-2) + ":" +
+  ("0" + today.getMinutes()).slice(-2) + ":" +
+  ("0" + today.getSeconds()).slice(-2);
+
+
+// Setup auto page reload
 setTimeout(function(){
    window.location.reload(1);
-}, 5000);
+}, 1000);
+
+
+// function to update the contents of the table every refresh
+function updateTable(){
+	var gmthour = "hour"+("0"+hours).slice(-2)+"gmt";
+	var aesthour = "hour"+("0"+hours).slice(-2)+"aest";
+	var aedthour = "hour"+("0"+hours).slice(-2)+"aedt"
+	document.getElementById(gmthour).innerText = ("0"+hours).slice(-2)+":"+("0"+minutes).slice(-2)+":"+("0"+seconds).slice(-2);
+	document.getElementById(aesthour).innerText = ("0"+(hours+10)).slice(-2)+":"+("0"+minutes).slice(-2)+":"+("0"+seconds).slice(-2);
+	document.getElementById(aedthour).innerText = ("0"+(hours+11)).slice(-2)+":"+("0"+minutes).slice(-2)+":"+("0"+seconds).slice(-2);
+}
 
 -->
 </script>
 </head>
 <body>
-<p>The time is now: <span id="curtime">
-<script>
+<p><span id="curtime">
+The time is now: GMT <script>
 <!--
 document.write(dateString);
+-->
+</script>
+<noscript>(enable scripting for live time)</noscript>
+<span id="localtime">
+<br/> Local Time: 
+<script>
+<!--
+document.write(localString);
 -->
 </script>
 </span></p>
 <table>
 <tr><th width="20px"></th><th width="80px">+0 GMT</th><th width="80px">+10 AEST</th><th width="80px">+11 AEDT</th></tr>
-<tr><td class="minutes0000"></td><td rowspan=12 class="hour00">00:00</td><td rowspan=12 class="hour00">10:00</td><td rowspan=12 class="hour00">11:00</td></tr>
+<tr><td class="minutes0000"></td><td rowspan=12 class="hour00"><span id="hour00gmt">00:00</span></td><td rowspan=12 class="hour00"><span id="hour00aest">10:00</span></td><td rowspan=12 class="hour00"><span id="hour00aedt">11:00</span></td></tr>
 <tr><td class="minutes0005"></td></tr>
 <tr><td class="minutes0010"></td></tr>
 <tr><td class="minutes0015"></td></tr>
@@ -61,7 +101,7 @@ document.write(dateString);
 <tr><td class="minutes0045"></td></tr>
 <tr><td class="minutes0050"></td></tr>
 <tr><td class="minutes0055"></td></tr>
-<tr><td class="minutes0100"></td><td rowspan=12 class="hour01">01:00</td><td rowspan=12 class="hour01">11:00</td><td rowspan=12 class="hour01">12:00</td></tr>
+<tr><td class="minutes0100"></td><td rowspan=12 class="hour01"><span id="hour01gmt">01:00</span></td><td rowspan=12 class="hour01"><span id="hour01aest">11:00</span></td><td rowspan=12 class="hour01"><span id="hour01aedt">12:00</span></td></tr>
 <tr><td class="minutes0105"></td></tr>
 <tr><td class="minutes0110"></td></tr>
 <tr><td class="minutes0115"></td></tr>
@@ -73,7 +113,7 @@ document.write(dateString);
 <tr><td class="minutes0145"></td></tr>
 <tr><td class="minutes0150"></td></tr>
 <tr><td class="minutes0155"></td></tr>
-<tr><td class="minutes0200"></td><td rowspan=12 class="hour02">02:00</td><td rowspan=12 class="hour02">12:00</td><td rowspan=12 class="hour02">13:00</td></tr>
+<tr><td class="minutes0200"></td><td rowspan=12 class="hour02"><span id="hour02gmt">02:00</span></td><td rowspan=12 class="hour02"><span id="hour02aest">12:00</span></td><td rowspan=12 class="hour02"><span id="hour02aedt">13:00</span></td></tr>
 <tr><td class="minutes0205"></td></tr>
 <tr><td class="minutes0210"></td></tr>
 <tr><td class="minutes0215"></td></tr>
@@ -85,7 +125,7 @@ document.write(dateString);
 <tr><td class="minutes0245"></td></tr>
 <tr><td class="minutes0250"></td></tr>
 <tr><td class="minutes0255"></td></tr>
-<tr><td class="minutes0300"></td><td rowspan=12 class="hour03">03:00</td><td rowspan=12 class="hour03">13:00</td><td rowspan=12 class="hour03">14:00</td></tr>
+<tr><td class="minutes0300"></td><td rowspan=12 class="hour03"><span id="hour03gmt">03:00</span></td><td rowspan=12 class="hour03"><span id="hour03aest">13:00</span></td><td rowspan=12 class="hour03"><span id="hour03aedt">14:00</span></td></tr>
 <tr><td class="minutes0305"></td></tr>
 <tr><td class="minutes0310"></td></tr>
 <tr><td class="minutes0315"></td></tr>
@@ -97,7 +137,7 @@ document.write(dateString);
 <tr><td class="minutes0345"></td></tr>
 <tr><td class="minutes0350"></td></tr>
 <tr><td class="minutes0355"></td></tr>
-<tr><td class="minutes0400"></td><td rowspan=12 class="hour04">04:00</td><td rowspan=12 class="hour04">14:00</td><td rowspan=12 class="hour04">15:00</td></tr>
+<tr><td class="minutes0400"></td><td rowspan=12 class="hour04"><span id="hour04gmt">04:00</span></td><td rowspan=12 class="hour04"><span id="hour04aest">14:00</span></td><td rowspan=12 class="hour04"><span id="hour04aedt">15:00</span></td></tr>
 <tr><td class="minutes0405"></td></tr>
 <tr><td class="minutes0410"></td></tr>
 <tr><td class="minutes0415"></td></tr>
@@ -109,7 +149,7 @@ document.write(dateString);
 <tr><td class="minutes0445"></td></tr>
 <tr><td class="minutes0450"></td></tr>
 <tr><td class="minutes0455"></td></tr>
-<tr><td class="minutes0500"></td><td rowspan=12 class="hour05">05:00</td><td rowspan=12 class="hour05">15:00</td><td rowspan=12 class="hour05">16:00</td></tr>
+<tr><td class="minutes0500"></td><td rowspan=12 class="hour05"><span id="hour05gmt">05:00</span></td><td rowspan=12 class="hour05"><span id="hour05aest">15:00</span></td><td rowspan=12 class="hour05"><span id="hour05aedt">16:00</span></td></tr>
 <tr><td class="minutes0505"></td></tr>
 <tr><td class="minutes0510"></td></tr>
 <tr><td class="minutes0515"></td></tr>
@@ -121,7 +161,7 @@ document.write(dateString);
 <tr><td class="minutes0545"></td></tr>
 <tr><td class="minutes0550"></td></tr>
 <tr><td class="minutes0555"></td></tr>
-<tr><td class="minutes0600"></td><td rowspan=12 class="hour06">06:00</td><td rowspan=12 class="hour06">16:00</td><td rowspan=12 class="hour06">17:00</td></tr>
+<tr><td class="minutes0600"></td><td rowspan=12 class="hour06"><span id="hour06gmt">06:00</span></td><td rowspan=12 class="hour06"><span id="hour06aest">16:00</span></td><td rowspan=12 class="hour06"><span id="hour06aedt">17:00</span></td></tr>
 <tr><td class="minutes0605"></td></tr>
 <tr><td class="minutes0610"></td></tr>
 <tr><td class="minutes0615"></td></tr>
@@ -133,7 +173,7 @@ document.write(dateString);
 <tr><td class="minutes0645"></td></tr>
 <tr><td class="minutes0650"></td></tr>
 <tr><td class="minutes0655"></td></tr>
-<tr><td class="minutes0700"></td><td rowspan=12 class="hour07">07:00</td><td rowspan=12 class="hour07">17:00</td><td rowspan=12 class="hour07">18:00</td></tr>
+<tr><td class="minutes0700"></td><td rowspan=12 class="hour07"><span id="hour07gmt">07:00</span></td><td rowspan=12 class="hour07"><span id="hour07aest">17:00</span></td><td rowspan=12 class="hour07"><span id="hour07aedt">18:00</span></td></tr>
 <tr><td class="minutes0705"></td></tr>
 <tr><td class="minutes0710"></td></tr>
 <tr><td class="minutes0715"></td></tr>
@@ -145,7 +185,7 @@ document.write(dateString);
 <tr><td class="minutes0745"></td></tr>
 <tr><td class="minutes0750"></td></tr>
 <tr><td class="minutes0755"></td></tr>
-<tr><td class="minutes0800"></td><td rowspan=12 class="hour08">08:00</td><td rowspan=12 class="hour08">18:00</td><td rowspan=12 class="hour08">19:00</td></tr>
+<tr><td class="minutes0800"></td><td rowspan=12 class="hour08"><span id="hour08gmt">08:00</span></td><td rowspan=12 class="hour08"><span id="hour08aest">18:00</span></td><td rowspan=12 class="hour08"><span id="hour08aedt">19:00</span></td></tr>
 <tr><td class="minutes0805"></td></tr>
 <tr><td class="minutes0810"></td></tr>
 <tr><td class="minutes0815"></td></tr>
@@ -157,7 +197,7 @@ document.write(dateString);
 <tr><td class="minutes0845"></td></tr>
 <tr><td class="minutes0850"></td></tr>
 <tr><td class="minutes0855"></td></tr>
-<tr><td class="minutes0900"></td><td rowspan=12 class="hour09">09:00</td><td rowspan=12 class="hour09">19:00</td><td rowspan=12 class="hour09">20:00</td></tr>
+<tr><td class="minutes0900"></td><td rowspan=12 class="hour09"><span id="hour09gmt">09:00</span></td><td rowspan=12 class="hour09"><span id="hour09aest">19:00</span></td><td rowspan=12 class="hour09"><span id="hour09aedt">20:00</span></td></tr>
 <tr><td class="minutes0905"></td></tr>
 <tr><td class="minutes0910"></td></tr>
 <tr><td class="minutes0915"></td></tr>
@@ -169,7 +209,7 @@ document.write(dateString);
 <tr><td class="minutes0945"></td></tr>
 <tr><td class="minutes0950"></td></tr>
 <tr><td class="minutes0955"></td></tr>
-<tr><td class="minutes1000"></td><td rowspan=12 class="hour10">10:00</td><td rowspan=12 class="hour10">20:00</td><td rowspan=12 class="hour10">21:00</td></tr>
+<tr><td class="minutes1000"></td><td rowspan=12 class="hour10"><span id="hour10gmt">10:00</span></td><td rowspan=12 class="hour10"><span id="hour10aest">20:00</span></td><td rowspan=12 class="hour10"><span id="hour10aedt">21:00</span></td></tr>
 <tr><td class="minutes1005"></td></tr>
 <tr><td class="minutes1010"></td></tr>
 <tr><td class="minutes1015"></td></tr>
@@ -181,7 +221,7 @@ document.write(dateString);
 <tr><td class="minutes1045"></td></tr>
 <tr><td class="minutes1050"></td></tr>
 <tr><td class="minutes1055"></td></tr>
-<tr><td class="minutes1100"></td><td rowspan=12 class="hour11">11:00</td><td rowspan=12 class="hour11">21:00</td><td rowspan=12 class="hour11">22:00</td></tr>
+<tr><td class="minutes1100"></td><td rowspan=12 class="hour11"><span id="hour11gmt">11:00</span></td><td rowspan=12 class="hour11"><span id="hour11aest">21:00</span></td><td rowspan=12 class="hour11"><span id="hour11aedt">22:00</span></td></tr>
 <tr><td class="minutes1105"></td></tr>
 <tr><td class="minutes1110"></td></tr>
 <tr><td class="minutes1115"></td></tr>
@@ -193,7 +233,7 @@ document.write(dateString);
 <tr><td class="minutes1145"></td></tr>
 <tr><td class="minutes1150"></td></tr>
 <tr><td class="minutes1155"></td></tr>
-<tr><td class="minutes1200"></td><td rowspan=12 class="hour12">12:00</td><td rowspan=12 class="hour12">22:00</td><td rowspan=12 class="hour12">23:00</td></tr>
+<tr><td class="minutes1200"></td><td rowspan=12 class="hour12"><span id="hour12gmt">12:00</span></td><td rowspan=12 class="hour12"><span id="hour12aest">22:00</span></td><td rowspan=12 class="hour12"><span id="hour12aedt">23:00</span></td></tr>
 <tr><td class="minutes1205"></td></tr>
 <tr><td class="minutes1210"></td></tr>
 <tr><td class="minutes1215"></td></tr>
@@ -205,7 +245,7 @@ document.write(dateString);
 <tr><td class="minutes1245"></td></tr>
 <tr><td class="minutes1250"></td></tr>
 <tr><td class="minutes1255"></td></tr>
-<tr><td class="minutes1300"></td><td rowspan=12 class="hour13">13:00</td><td rowspan=12 class="hour13">23:00</td><td rowspan=12 class="hour13">00:00</td></tr>
+<tr><td class="minutes1300"></td><td rowspan=12 class="hour13"><span id="hour13gmt">13:00</span></td><td rowspan=12 class="hour13"><span id="hour13aest">23:00</span></td><td rowspan=12 class="hour13"><span id="hour13aedt">00:00</span></td></tr>
 <tr><td class="minutes1305"></td></tr>
 <tr><td class="minutes1310"></td></tr>
 <tr><td class="minutes1315"></td></tr>
@@ -217,7 +257,7 @@ document.write(dateString);
 <tr><td class="minutes1345"></td></tr>
 <tr><td class="minutes1350"></td></tr>
 <tr><td class="minutes1355"></td></tr>
-<tr><td class="minutes1400"></td><td rowspan=12 class="hour14">14:00</td><td rowspan=12 class="hour14">00:00</td><td rowspan=12 class="hour14">01:00</td></tr>
+<tr><td class="minutes1400"></td><td rowspan=12 class="hour14"><span id="hour14gmt">14:00</span></td><td rowspan=12 class="hour14"><span id="hour14aest">00:00</span></td><td rowspan=12 class="hour14"><span id="hour14aedt">01:00</span></td></tr>
 <tr><td class="minutes1405"></td></tr>
 <tr><td class="minutes1410"></td></tr>
 <tr><td class="minutes1415"></td></tr>
@@ -229,7 +269,7 @@ document.write(dateString);
 <tr><td class="minutes1445"></td></tr>
 <tr><td class="minutes1450"></td></tr>
 <tr><td class="minutes1455"></td></tr>
-<tr><td class="minutes1500"></td><td rowspan=12 class="hour15">15:00</td><td rowspan=12 class="hour15">01:00</td><td rowspan=12 class="hour15">02:00</td></tr>
+<tr><td class="minutes1500"></td><td rowspan=12 class="hour15"><span id="hour15gmt">15:00</span></td><td rowspan=12 class="hour15"><span id="hour15aest">01:00</span></td><td rowspan=12 class="hour15"><span id="hour15aedt">02:00</span></td></tr>
 <tr><td class="minutes1505"></td></tr>
 <tr><td class="minutes1510"></td></tr>
 <tr><td class="minutes1515"></td></tr>
@@ -241,7 +281,7 @@ document.write(dateString);
 <tr><td class="minutes1545"></td></tr>
 <tr><td class="minutes1550"></td></tr>
 <tr><td class="minutes1555"></td></tr>
-<tr><td class="minutes1600"></td><td rowspan=12 class="hour16">16:00</td><td rowspan=12 class="hour16">02:00</td><td rowspan=12 class="hour16">03:00</td></tr>
+<tr><td class="minutes1600"></td><td rowspan=12 class="hour16"><span id="hour16gmt">16:00</span></td><td rowspan=12 class="hour16"><span id="hour16aest">02:00</span></td><td rowspan=12 class="hour16"><span id="hour16aedt">03:00</span></td></tr>
 <tr><td class="minutes1605"></td></tr>
 <tr><td class="minutes1610"></td></tr>
 <tr><td class="minutes1615"></td></tr>
@@ -253,7 +293,7 @@ document.write(dateString);
 <tr><td class="minutes1645"></td></tr>
 <tr><td class="minutes1650"></td></tr>
 <tr><td class="minutes1655"></td></tr>
-<tr><td class="minutes1700"></td><td rowspan=12 class="hour17">17:00</td><td rowspan=12 class="hour17">03:00</td><td rowspan=12 class="hour17">04:00</td></tr>
+<tr><td class="minutes1700"></td><td rowspan=12 class="hour17"><span id="hour17gmt">17:00</span></td><td rowspan=12 class="hour17"><span id="hour17aest">03:00</span></td><td rowspan=12 class="hour17"><span id="hour17aedt">04:00</span></td></tr>
 <tr><td class="minutes1705"></td></tr>
 <tr><td class="minutes1710"></td></tr>
 <tr><td class="minutes1715"></td></tr>
@@ -265,7 +305,7 @@ document.write(dateString);
 <tr><td class="minutes1745"></td></tr>
 <tr><td class="minutes1750"></td></tr>
 <tr><td class="minutes1755"></td></tr>
-<tr><td class="minutes1800"></td><td rowspan=12 class="hour18">18:00</td><td rowspan=12 class="hour18">04:00</td><td rowspan=12 class="hour18">05:00</td></tr>
+<tr><td class="minutes1800"></td><td rowspan=12 class="hour18"><span id="hour18gmt">18:00</span></td><td rowspan=12 class="hour18"><span id="hour18aest">04:00</span></td><td rowspan=12 class="hour18"><span id="hour18aedt">05:00</span></td></tr>
 <tr><td class="minutes1805"></td></tr>
 <tr><td class="minutes1810"></td></tr>
 <tr><td class="minutes1815"></td></tr>
@@ -277,7 +317,7 @@ document.write(dateString);
 <tr><td class="minutes1845"></td></tr>
 <tr><td class="minutes1850"></td></tr>
 <tr><td class="minutes1855"></td></tr>
-<tr><td class="minutes1900"></td><td rowspan=12 class="hour19">19:00</td><td rowspan=12 class="hour19">05:00</td><td rowspan=12 class="hour19">06:00</td></tr>
+<tr><td class="minutes1900"></td><td rowspan=12 class="hour19"><span id="hour19gmt">19:00</span></td><td rowspan=12 class="hour19"><span id="hour19aest">05:00</span></td><td rowspan=12 class="hour19"><span id="hour19aedt">06:00</span></td></tr>
 <tr><td class="minutes1905"></td></tr>
 <tr><td class="minutes1910"></td></tr>
 <tr><td class="minutes1915"></td></tr>
@@ -289,7 +329,7 @@ document.write(dateString);
 <tr><td class="minutes1945"></td></tr>
 <tr><td class="minutes1950"></td></tr>
 <tr><td class="minutes1955"></td></tr>
-<tr><td class="minutes2000"></td><td rowspan=12 class="hour20">20:00</td><td rowspan=12 class="hour20">06:00</td><td rowspan=12 class="hour20">07:00</td></tr>
+<tr><td class="minutes2000"></td><td rowspan=12 class="hour20"><span id="hour20gmt">20:00</span></td><td rowspan=12 class="hour20"><span id="hour20aest">06:00</span></td><td rowspan=12 class="hour20"><span id="hour20aedt">07:00</span></td></tr>
 <tr><td class="minutes2005"></td></tr>
 <tr><td class="minutes2010"></td></tr>
 <tr><td class="minutes2015"></td></tr>
@@ -301,7 +341,7 @@ document.write(dateString);
 <tr><td class="minutes2045"></td></tr>
 <tr><td class="minutes2050"></td></tr>
 <tr><td class="minutes2055"></td></tr>
-<tr><td class="minutes2100"></td><td rowspan=12 class="hour21">21:00</td><td rowspan=12 class="hour21">07:00</td><td rowspan=12 class="hour21">08:00</td></tr>
+<tr><td class="minutes2100"></td><td rowspan=12 class="hour21"><span id="hour21gmt">21:00</span></td><td rowspan=12 class="hour21"><span id="hour21aest">07:00</span></td><td rowspan=12 class="hour21"><span id="hour21aedt">08:00</span></td></tr>
 <tr><td class="minutes2105"></td></tr>
 <tr><td class="minutes2110"></td></tr>
 <tr><td class="minutes2115"></td></tr>
@@ -313,7 +353,7 @@ document.write(dateString);
 <tr><td class="minutes2145"></td></tr>
 <tr><td class="minutes2150"></td></tr>
 <tr><td class="minutes2155"></td></tr>
-<tr><td class="minutes2200"></td><td rowspan=12 class="hour22">22:00</td><td rowspan=12 class="hour22">08:00</td><td rowspan=12 class="hour22">09:00</td></tr>
+<tr><td class="minutes2200"></td><td rowspan=12 class="hour22"><span id="hour22gmt">22:00</span></td><td rowspan=12 class="hour22"><span id="hour22aest">08:00</span></td><td rowspan=12 class="hour22"><span id="hour22aedt">09:00</span></td></tr>
 <tr><td class="minutes2205"></td></tr>
 <tr><td class="minutes2210"></td></tr>
 <tr><td class="minutes2215"></td></tr>
@@ -325,7 +365,7 @@ document.write(dateString);
 <tr><td class="minutes2245"></td></tr>
 <tr><td class="minutes2250"></td></tr>
 <tr><td class="minutes2255"></td></tr>
-<tr><td class="minutes2300"></td><td rowspan=12 class="hour23">23:00</td><td rowspan=12 class="hour23">09:00</td><td rowspan=12 class="hour23">10:00</td></tr>
+<tr><td class="minutes2300"></td><td rowspan=12 class="hour23"><span id="hour23gmt">23:00</span></td><td rowspan=12 class="hour23"><span id="hour23aest">09:00</span></td><td rowspan=12 class="hour23"><span id="hour23aedt">10:00</span></td></tr>
 <tr><td class="minutes2305"></td></tr>
 <tr><td class="minutes2310"></td></tr>
 <tr><td class="minutes2315"></td></tr>
@@ -337,5 +377,11 @@ document.write(dateString);
 <tr><td class="minutes2345"></td></tr>
 <tr><td class="minutes2350"></td></tr>
 <tr><td class="minutes2355"></td></tr>
+<noscript><p>This table updates live highlighting the current time if you have scripting enabled.</p></noscript>
+<script>
+<!-- 
+updateTable(); 
+-->
+</script>
 </body>
 </html>
