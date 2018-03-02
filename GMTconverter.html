@@ -12,19 +12,28 @@ tr:nth-child(even) {background-color: #f2f2f2}
 <script>
 <!--
 
+var tzstyle = document.createElement('style');
+var sheet = document.createElement('style');
+var sheet2 = document.createElement('style');
+
+
+setInterval(function(){
+doUpdate();
+}, 1000);
+
+function doUpdate(){
+
 // grab current timestamp
 var today = new Date();
 
 // highlight active time zone
 var timezone = (today.getTimezoneOffset()/60);
-var tzstyle = document.createElement('style');
 tzstyle.innerHTML = "th.TZ"+timezone+" {color: yellow;}";
 document.head.appendChild(tzstyle);
 
 // get UTC hour
 var hours = today.getUTCHours();
 // modifiy style sheet to highlight correct hour row
-var sheet = document.createElement('style');
 sheet.innerHTML = ".hour"+("0"+hours).slice(-2)+" { background-color: yellow;}";
 document.head.appendChild(sheet);
 
@@ -32,7 +41,6 @@ document.head.appendChild(sheet);
 var minutes = today.getUTCMinutes();
 var minutesmod5 = minutes - (minutes % 5);
 // modify style sheet to highlight correct 1/12th (5 minutes) hour row.
-var sheet2 = document.createElement('style');
 sheet2.innerHTML = ".minutes"+("0"+hours).slice(-2)+("0"+minutesmod5).slice(-2)+" { background-color: yellow;}";
 document.head.appendChild(sheet2);
 
@@ -47,6 +55,7 @@ var dateString =
   ("0" + today.getUTCHours()).slice(-2) + ":" +
   ("0" + today.getUTCMinutes()).slice(-2) + ":" +
   ("0" + today.getUTCSeconds()).slice(-2);
+document.getElementById("curtime").innerText = "GMT "+dateString;
   
 var localString =
   "+"+Math.abs(today.getTimezoneOffset()/60) +" "+
@@ -56,44 +65,25 @@ var localString =
   ("0" + today.getHours()).slice(-2) + ":" +
   ("0" + today.getMinutes()).slice(-2) + ":" +
   ("0" + today.getSeconds()).slice(-2);
+document.getElementById("localtime").innerText = localString;
 
+// update the contents of the table every refresh
+var gmthour = "hour"+("0"+hours).slice(-2)+"gmt";
+var aesthour = "hour"+("0"+hours).slice(-2)+"aest";
+var aedthour = "hour"+("0"+hours).slice(-2)+"aedt"
+document.getElementById(gmthour).innerText = ("0"+hours).slice(-2)+":"+("0"+minutes).slice(-2)+":"+("0"+seconds).slice(-2);
+document.getElementById(aesthour).innerText = ("0"+(hours+10)).slice(-2)+":"+("0"+minutes).slice(-2)+":"+("0"+seconds).slice(-2);
+document.getElementById(aedthour).innerText = ("0"+(hours+11)).slice(-2)+":"+("0"+minutes).slice(-2)+":"+("0"+seconds).slice(-2);
 
-// Setup auto page reload
-setTimeout(function(){
-   window.location.reload(1);
-}, 1000);
-
-
-// function to update the contents of the table every refresh
-function updateTable(){
-	var gmthour = "hour"+("0"+hours).slice(-2)+"gmt";
-	var aesthour = "hour"+("0"+hours).slice(-2)+"aest";
-	var aedthour = "hour"+("0"+hours).slice(-2)+"aedt"
-	document.getElementById(gmthour).innerText = ("0"+hours).slice(-2)+":"+("0"+minutes).slice(-2)+":"+("0"+seconds).slice(-2);
-	document.getElementById(aesthour).innerText = ("0"+(hours+10)).slice(-2)+":"+("0"+minutes).slice(-2)+":"+("0"+seconds).slice(-2);
-	document.getElementById(aedthour).innerText = ("0"+(hours+11)).slice(-2)+":"+("0"+minutes).slice(-2)+":"+("0"+seconds).slice(-2);
-}
+};
 
 -->
 </script>
 </head>
 <body>
-<p><span id="curtime">
-The time is now: GMT <script>
-<!--
-document.write(dateString);
--->
-</script>
-<noscript>(enable scripting for live time)</noscript>
-<span id="localtime">
-<br/> Local Time: 
-<script>
-<!--
-document.write(localString);
--->
-</script>
-</span></p>
 <table>
+<tr><td colspan=2 style="font-size: 0.9em;">Time is now:</td><td style="font-size: 0.9em; text-align: right;" colspan=2><span id="curtime"></span></td></tr>
+<tr><td colspan=2 style="font-size: 0.9em;">Local time is now:</td><td style="font-size: 0.9em; text-align: right;" colspan=2><span id="localtime"></span</td></tr>
 <tr><th width="20px"></th><th class="TZ00" width="80px">+0 GMT</th><th class="TZ-10" width="80px">+10 AEST</th><th class="TZ-11" width="80px">+11 AEDT</th></tr>
 <tr><td class="minutes0000"></td><td rowspan=12 class="hour00"><span id="hour00gmt">00:00</span></td><td rowspan=12 class="hour00"><span id="hour00aest">10:00</span></td><td rowspan=12 class="hour00"><span id="hour00aedt">11:00</span></td></tr>
 <tr><td class="minutes0005"></td></tr>
@@ -383,11 +373,5 @@ document.write(localString);
 <tr><td class="minutes2345"></td></tr>
 <tr><td class="minutes2350"></td></tr>
 <tr><td class="minutes2355"></td></tr>
-<noscript><p>This table updates live highlighting the current time if you have scripting enabled.</p></noscript>
-<script>
-<!-- 
-updateTable(); 
--->
-</script>
 </body>
 </html>
