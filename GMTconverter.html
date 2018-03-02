@@ -15,6 +15,12 @@ tr:nth-child(even) {background-color: #f2f2f2}
 // grab current timestamp
 var today = new Date();
 
+// highlight active time zone
+var timezone = (today.getTimezoneOffset()/60);
+var tzstyle = document.createElement('style');
+tzstyle.innerHTML = "th.TZ"+timezone+" {color: yellow;}";
+document.head.appendChild(tzstyle);
+
 // get UTC hour
 var hours = today.getUTCHours();
 // modifiy style sheet to highlight correct hour row
@@ -43,7 +49,7 @@ var dateString =
   ("0" + today.getUTCSeconds()).slice(-2);
   
 var localString =
-  (today.getTimezoneOffset()/60) +" "+
+  "+"+Math.abs(today.getTimezoneOffset()/60) +" "+
   today.getFullYear() +"/"+
   ("0" + (today.getMonth()+1)).slice(-2) +"/"+
   ("0" + today.getDate()).slice(-2) + " " +
@@ -88,7 +94,7 @@ document.write(localString);
 </script>
 </span></p>
 <table>
-<tr><th width="20px"></th><th width="80px">+0 GMT</th><th width="80px">+10 AEST</th><th width="80px">+11 AEDT</th></tr>
+<tr><th width="20px"></th><th class="TZ00" width="80px">+0 GMT</th><th class="TZ-10" width="80px">+10 AEST</th><th class="TZ-11" width="80px">+11 AEDT</th></tr>
 <tr><td class="minutes0000"></td><td rowspan=12 class="hour00"><span id="hour00gmt">00:00</span></td><td rowspan=12 class="hour00"><span id="hour00aest">10:00</span></td><td rowspan=12 class="hour00"><span id="hour00aedt">11:00</span></td></tr>
 <tr><td class="minutes0005"></td></tr>
 <tr><td class="minutes0010"></td></tr>
