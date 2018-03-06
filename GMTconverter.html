@@ -67,6 +67,18 @@ var localString =
   ("0" + today.getSeconds()).slice(-2);
 document.getElementById("localtime").innerText = localString;
 
+
+// clear out the table
+for (i=0; i<=23; i++){
+  var prevhours = i;
+  var gmthour = "hour"+("0"+prevhours).slice(-2)+"gmt";
+  var aesthour = "hour"+("0"+prevhours).slice(-2)+"aest";
+  var aedthour = "hour"+("0"+prevhours).slice(-2)+"aedt"
+  document.getElementById(gmthour).innerText = ("0"+prevhours).slice(-2)+":00";
+  document.getElementById(aesthour).innerText = ("0"+(prevhours+10)%24).slice(-2)+":00";
+  document.getElementById(aedthour).innerText = ("0"+(prevhours+11)%24).slice(-2)+":00";
+}
+
 // update the contents of the table every refresh
 var gmthour = "hour"+("0"+hours).slice(-2)+"gmt";
 var aesthour = "hour"+("0"+hours).slice(-2)+"aest";
@@ -75,15 +87,6 @@ document.getElementById(gmthour).innerText = ("0"+hours).slice(-2)+":"+("0"+minu
 document.getElementById(aesthour).innerText = ("0"+(hours+10)).slice(-2)+":"+("0"+minutes).slice(-2)+":"+("0"+seconds).slice(-2);
 document.getElementById(aedthour).innerText = ("0"+(hours+11)).slice(-2)+":"+("0"+minutes).slice(-2)+":"+("0"+seconds).slice(-2);
 
-// clear out the previous hour
-var prevhours = hours - 1;
-if (prevhours < 0); prevhours = 0;
-var gmthour = "hour"+("0"+prevhours).slice(-2)+"gmt";
-var aesthour = "hour"+("0"+prevhours).slice(-2)+"aest";
-var aedthour = "hour"+("0"+prevhours).slice(-2)+"aedt"
-document.getElementById(gmthour).innerText = ("0"+prevhours).slice(-2)+":00";
-document.getElementById(aesthour).innerText = ("0"+(prevhours+10)).slice(-2)+":00";
-document.getElementById(aedthour).innerText = ("0"+(prevhours+11)).slice(-2)+":00";
 
 
 };
